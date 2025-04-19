@@ -1,0 +1,7 @@
+Flask
+flask-cors
+yfinance
+beautifulsoup4
+requests
+python-dotenv
+Bharat-sm-data
