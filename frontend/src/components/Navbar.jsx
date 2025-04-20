@@ -8,6 +8,7 @@ const Navbar = () => (
     <ul>
       <li><Link to="/">Dashboard</Link></li>
       <li><Link to="/screener">Screener</Link></li>
+      <li><Link to="/patterns">Pattern Recognition</Link></li>
       <li><Link to="/assistant">AI Assistant</Link></li>
     </ul>
   </nav>
