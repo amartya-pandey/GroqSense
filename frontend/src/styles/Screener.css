@@ -1,121 +1,188 @@
 .screener-container {
-  max-width: 1400px;
+  padding: 20px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
-.screener-title {
+.screener-container h1 {
   text-align: center;
-  color: #2c3e50;
-  margin-bottom: 2rem;
+  margin-bottom: 30px;
+  color: #333;
 }
 
 .filters-section {
   background: #fff;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 30px;
 }
 
-.exchange-filter {
-  margin-bottom: 1.5rem;
+.filter-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.exchange-filter,
+.index-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.exchange-filter label,
+.index-filter label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.exchange-select,
+.index-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 200px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.exchange-select:focus,
+.index-select:focus {
+  outline: none;
+  border-color: #1976d2;
 }
 
 .metric-tabs {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
 }
 
 .tab-button {
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   border: none;
-  border-radius: 4px;
-  background: #f0f0f0;
-  color: #666;
+  background: none;
   cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  border-radius: 4px;
   transition: all 0.3s ease;
-  white-space: nowrap;
 }
 
 .tab-button:hover {
-  background: #e0e0e0;
+  background: #f5f5f5;
 }
 
 .tab-button.active {
-  background: #3498db;
+  background: #1976d2;
   color: white;
 }
 
 .filters-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 5px;
 }
 
 .filter-group label {
-  font-weight: 500;
-  color: #2c3e50;
+  font-size: 14px;
+  color: #666;
 }
 
-.filter-group input,
-.filter-group select {
-  padding: 0.5rem;
+.filter-group input {
+  padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
-.filter-group input:focus,
-.filter-group select:focus {
+.filter-group input:focus {
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  border-color: #1976d2;
+}
+
+.button-group {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .filter-button {
-  display: block;
-  width: 100%;
-  max-width: 200px;
-  margin: 0 auto 2rem;
-  padding: 0.75rem;
-  background: #3498db;
+  background: #1976d2;
   color: white;
   border: none;
+  padding: 10px 20px;
   border-radius: 4px;
-  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s ease;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  min-width: 150px;
 }
 
-.filter-button:hover {
-  background: #2980b9;
+.filter-button.fetch-all {
+  background: #4caf50;
+}
+
+.filter-button.fetch-all:hover {
+  background: #43a047;
+}
+
+.filter-button.apply-filters {
+  background: #1976d2;
+}
+
+.filter-button.apply-filters:hover {
+  background: #1565c0;
 }
 
 .filter-button:disabled {
-  background: #bdc3c7;
+  background: #ccc;
   cursor: not-allowed;
 }
 
-.results-container {
+.results-section {
   background: #fff;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
 }
 
-.results-container h2 {
-  color: #2c3e50;
-  margin-bottom: 1rem;
+.results-section h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* DataGrid styles */
+.MuiDataGrid-root {
+  border: none !important;
+}
+
+.MuiDataGrid-cell {
+  border-bottom: 1px solid #eee !important;
+}
+
+.MuiDataGrid-columnHeaders {
+  background: #f5f5f5;
+  border-bottom: 1px solid #eee !important;
+}
+
+.MuiDataGrid-row:hover {
+  background: #f5f5f5 !important;
 }
 
 .results-table {
@@ -129,21 +196,23 @@
 
 .results-table th,
 .results-table td {
-  padding: 0.75rem;
+  padding: 12px;
   text-align: left;
   border-bottom: 1px solid #eee;
 }
 
 .results-table th {
-  background: #f8f9fa;
+  background: #f5f5f5;
   font-weight: 600;
-  color: #2c3e50;
-  position: sticky;
-  top: 0;
+  color: #333;
 }
 
 .results-table tr:hover {
-  background: #f8f9fa;
+  background: #f9f9f9;
+}
+
+.results-table td {
+  color: #666;
 }
 
 .results-table td.exchange-nse {
@@ -165,23 +234,43 @@
     padding: 1rem;
   }
 
+  .filter-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .exchange-select,
+  .index-select {
+    width: 100%;
+  }
+
   .filters-grid {
     grid-template-columns: 1fr;
   }
 
   .metric-tabs {
-    flex-wrap: wrap;
+    overflow-x: auto;
+    padding-bottom: 5px;
   }
 
   .tab-button {
-    flex: 1;
-    min-width: 120px;
+    white-space: nowrap;
   }
 
   .results-table th,
   .results-table td {
     padding: 0.5rem;
     font-size: 0.9rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .filter-button {
+    width: 100%;
+    max-width: 300px;
   }
 }
 

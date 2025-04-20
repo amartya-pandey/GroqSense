@@ -16,8 +16,8 @@ def get_cached_stocks():
     """Get cached list of all NSE and BSE stocks with sectors."""
     return get_all_stocks_with_sectors()
 
-# @lru_cache(maxsize=1000, ttl=3600)  # Cache 1000 stocks for 1 hour
-@lru_cache(maxsize=1000,)  # Cache 1000 stocks for 1 hour
+@lru_cache(maxsize=1000, ttl=3600)  # Cache 1000 stocks for 1 hour
+# @lru_cache(maxsize=1000,)  # Cache 1000 stocks for 1 hour
 def get_stock_info(ticker: str) -> Dict[str, Any]:
     """Fetch detailed financial information for a given stock ticker."""
     try:

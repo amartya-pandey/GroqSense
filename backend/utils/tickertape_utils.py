@@ -11,33 +11,50 @@ logger = logging.getLogger(__name__)
 
 class TickertapeFetcher:
     def __init__(self):
-        self.base_url = "https://www.tickertape.in"
-        self.api_url = "https://api.tickertape.in"
+        self.base_url = "https://api.tickertape.in"
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Language": "en-US,en;q=0.5",
+            "Accept": "application/json",
         }
+        self.logger = logging.getLogger(__name__)
 
-    @lru_cache(maxsize=1000)
-    def get_stock_overview(self, symbol: str) -> Dict[str, Any]:
-        """Get comprehensive stock overview from Tickertape."""
+    @lru_cache(maxsize=100)
+    def get_stock_overview(self, symbol):
         try:
-            url = f"{self.api_url}/stocks/{symbol}/overview"
+            url = f"{self.base_url}/stocks/{symbol}/overview"
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()
             
             data = response.json()
-            return self._parse_overview_data(data)
+            if not data:
+                self.logger.warning(f"No data found for {symbol}")
+                return self._get_fallback_data(symbol)
+            
+            return {
+                'name': data.get('name', symbol),
+                'sector': data.get('sector', 'Unknown'),
+                'industry': data.get('industry', 'Unknown'),
+                'description': data.get('description', 'No description available')
+            }
+            
         except Exception as e:
-            logger.error(f"Error fetching stock overview for {symbol}: {str(e)}")
-            return None
+            self.logger.error(f"Error fetching stock overview for {symbol}: {str(e)}")
+            return self._get_fallback_data(symbol)
+    
+    def _get_fallback_data(self, symbol):
+        """Provide fallback data when API calls fail"""
+        return {
+            'name': symbol,
+            'sector': 'Unknown',
+            'industry': 'Unknown',
+            'description': 'No description available'
+        }
 
     @lru_cache(maxsize=1000)
     def get_technical_analysis(self, symbol: str) -> Dict[str, Any]:
         """Get technical analysis data for a symbol."""
         try:
-            url = f"{self.api_url}/stocks/{symbol}/technical"
+            url = f"{self.base_url}/stocks/{symbol}/technical"
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()
             
@@ -51,7 +68,7 @@ class TickertapeFetcher:
     def get_fundamental_analysis(self, symbol: str) -> Dict[str, Any]:
         """Get fundamental analysis data for a symbol."""
         try:
-            url = f"{self.api_url}/stocks/{symbol}/fundamentals"
+            url = f"{self.base_url}/stocks/{symbol}/fundamentals"
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()
             
@@ -65,7 +82,7 @@ class TickertapeFetcher:
     def get_peer_comparison(self, symbol: str) -> Dict[str, Any]:
         """Get peer comparison data for a symbol."""
         try:
-            url = f"{self.api_url}/stocks/{symbol}/peers"
+            url = f"{self.base_url}/stocks/{symbol}/peers"
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()
             
