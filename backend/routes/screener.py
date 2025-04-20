@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
-from utils.stock_metrics_utils import stock_metrics_fetcher
-from utils.tickertape_utils import tickertape_fetcher
-from utils.stock_list_utils import stock_list_fetcher
-from utils.companies import NSE_COMPANIES, BSE_COMPANIES, NSE_NEXT_50, BSE_100
+from backend.utils.stock_metrics_utils import stock_metrics_fetcher
+from backend.utils.tickertape_utils import tickertape_fetcher
+from backend.utils.stock_list_utils import stock_list_fetcher
+from backend.utils.companies import NSE_COMPANIES, BSE_COMPANIES, NSE_NEXT_50, BSE_100
 import logging
 
 screener_bp = Blueprint('screener', __name__)

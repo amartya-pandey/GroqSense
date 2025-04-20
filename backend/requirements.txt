@@ -5,3 +5,6 @@ beautifulsoup4
 requests
 python-dotenv
 Bharat-sm-data
+groq
+pandas
+numpy
