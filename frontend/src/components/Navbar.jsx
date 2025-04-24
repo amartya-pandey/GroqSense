@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-// import './Navbar.css'; // optional
+import '../styles/Navbar.css'; // Import the CSS for the navbar
 
-const Navbar = () => (
-  <nav className="navbar">
-    <h2>GroqSense</h2>
+const Navbar = () => {
+  return (
+    <nav className="navbar">
+      <div className="navbar-logo">
+        <h1>GroqSense</h1>
+      </div>
     <ul>
       <li><Link to="/">Dashboard</Link></li>
       <li><Link to="/screener">Screener</Link></li>
@@ -13,5 +16,6 @@ const Navbar = () => (
     </ul>
   </nav>
 );
+};
 
 export default Navbar;

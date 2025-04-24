@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import API from '../api';
+import MarkdownIt from 'markdown-it';
+import '../styles/Assistant.css'; // Import the new CSS file
 
 const Assistant = () => {
   const [query, setQuery] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const md = new MarkdownIt();
 
   const handleAsk = async () => {
     if (!query.trim()) return;
@@ -25,21 +29,25 @@ const Assistant = () => {
   };
 
   return (
-    <div>
-      <h2>AI Assistant</h2>
+    <div className="assistant-container">
+      <h2 className="assistant-title">AI Assistant</h2>
       <textarea
+        className="assistant-textarea"
         rows={4}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Ask your stock question..."
-        style={{ width: '100%', padding: '10px' }}
+        placeholder="Ask your question..."
       />
-      <br />
-      <button onClick={handleAsk} disabled={loading}>
+      <button className="assistant-button" onClick={handleAsk} disabled={loading}>
         {loading ? 'Thinking...' : 'Ask'}
       </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {response && <div style={{ marginTop: '20px', whiteSpace: 'pre-line' }}>{response}</div>}
+      {error && <p className="assistant-error">{error}</p>}
+      {response && (
+        <div
+          className="assistant-response"
+          dangerouslySetInnerHTML={{ __html: md.render(response) }}
+        />
+      )}
     </div>
   );
 };
