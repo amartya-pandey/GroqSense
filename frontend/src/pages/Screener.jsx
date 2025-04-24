@@ -74,12 +74,12 @@ const Screener = () => {
     { field: 'pe', headerName: 'P/E' },
     { field: 'pb', headerName: 'P/B' },
     { field: 'bookValue', headerName: 'Book Value' },
-    { field: 'eps', headerName: 'EPS' },
-    { field: 'roe', headerName: 'ROE (%)' },
-    { field: 'cagr5Y', headerName: '5Y CAGR (%)' },
+    { field: 'eps', headerName: 'Diluted EPS' },
+    // { field: 'roe', headerName: 'ROE (%)' },
+    // { field: 'cagr5Y', headerName: '5Y CAGR (%)' },
     { field: 'debtToEquity', headerName: 'Debt/Equity' },
     { field: 'marketCap', headerName: 'Market Cap (Cr)' },
-    { field: 'dividendYield', headerName: 'Div Yield (%)' },
+    // { field: 'dividendYield', headerName: 'Div Yield (%)' },
     { field: 'beta', headerName: 'Beta' },
     { field: 'avgVolume', headerName: 'Avg Volume' }
   ];
