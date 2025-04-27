@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from backend.utils.pattern_recognition import PatternRecognizer
+from utils.pattern_recognition import PatternRecognizer
 import pandas as pd
 import logging
 import os
