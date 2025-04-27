@@ -157,6 +157,7 @@ const Screener = () => {
     if (!symbol.endsWith('.NS') && !symbol.endsWith('.BSE')) {
       redirectSymbol = symbol + '.NS';
     }
+    redirectSymbol = symbol + '.NS'
     navigate(`/stock/${redirectSymbol}`);
   };
 
