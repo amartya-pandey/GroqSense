@@ -153,7 +153,11 @@ const Screener = () => {
   };
 
   const handleStockClick = (symbol) => {
-    navigate(`/stock/${symbol}`);
+    let redirectSymbol = symbol;
+    if (!symbol.endsWith('.NS') && !symbol.endsWith('.BSE')) {
+      redirectSymbol = symbol + '.NS';
+    }
+    navigate(`/stock/${redirectSymbol}`);
   };
 
   return (
