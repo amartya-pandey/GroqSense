@@ -12,6 +12,7 @@ import {
     Legend
 } from 'chart.js';
 import axios from 'axios';
+import './StockGraph.css';
 
 ChartJS.register(
     CategoryScale,
