@@ -1,10 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
-from backend.routes.market import market_bp
-from backend.routes.screener import screener_bp
-from backend.routes.ai import ai_bp
-from backend.routes.patterns import patterns_bp
-from backend.routes.stock import stock_bp
+from routes.market import market_bp
+from routes.screener import screener_bp
+from routes.ai import ai_bp
+from routes.patterns import patterns_bp
+from routes.stock import stock_bp
 from dotenv import load_dotenv
 
 load_dotenv()
