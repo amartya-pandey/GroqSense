@@ -15,10 +15,15 @@ const Patterns = () => {
             setPatterns(null);
             setTrendSummary('');
 
-            // Send request to backend
+            // Fetch historical stock data first
+            const histResponse = await axios.get(`/api/stock/historical/${symbol}?range=${period}`);
+            const histData = histResponse.data;
+
+            // Send request to backend with historical data
             const response = await axios.post('/patterns/analyze-trends', {
                 symbol,
-                period
+                period,
+                historical: histData
             });
 
             if (response.data.success) {

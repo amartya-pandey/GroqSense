@@ -24,10 +24,20 @@ def analyze_trends():
         
         symbol = data.get('symbol')
         period = data.get('period', '1y')
-        
-        # Directly ask Gemini AI to analyze the trend
-        query = f"Analyze trends for {symbol} over {period}."
-        summary = pattern_recognizer.analyze_chart(pd.DataFrame(), query)
+        historical = data.get('historical')
+
+        # Use the historical data from the frontend if provided
+        if historical and 'prices' in historical and 'dates' in historical:
+            df = pd.DataFrame({
+                'Date': historical['dates'],
+                'Close': historical['prices'],
+                'Volume': historical['volumes'] if 'volumes' in historical else [None]*len(historical['dates'])
+            })
+        else:
+            df = pd.DataFrame()
+
+        # Use PatternRecognizer to analyze the chart
+        summary = pattern_recognizer.analyze_chart(df, f"Analyze trends for {symbol} over {period}.")
         logging.info(f"Generated summary: {summary}")
         
         return jsonify({
