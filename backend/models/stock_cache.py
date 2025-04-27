@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, DateTime, JSON
 from datetime import datetime
-from backend.utils.db import Base
+from utils.db import Base
 
 class StockCache(Base):
     __tablename__ = 'stock_cache'
