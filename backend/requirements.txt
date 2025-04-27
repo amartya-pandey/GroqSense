@@ -10,8 +10,4 @@ pandas
 numpy
 redis
 google-generativeai
-<<<<<<< HEAD
 gunicorn
-=======
-gunicorn
->>>>>>> 91a0dc3601f37d940d8b7de3e58da11a334fab27
