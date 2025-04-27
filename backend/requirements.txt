@@ -8,6 +8,7 @@ Bharat-sm-data
 groq
 pandas
 numpy
-redis
 google-generativeai
 gunicorn
+sqlalchemy==2.0.30
+psycopg2-binary==2.9.9
