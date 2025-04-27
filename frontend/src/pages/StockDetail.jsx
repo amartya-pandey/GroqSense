@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import StockGraph from '../components/StockGraph';
+import API_BASE_URL from '../api/config';
 
 const StockDetail = () => {
     const { symbol } = useParams();
@@ -13,7 +14,7 @@ const StockDetail = () => {
         const fetchStockData = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`/api/stock/${symbol}`);
+                const response = await axios.get(`${API_BASE_URL}/api/stock/${symbol}`);
                 setStockData(response.data);
             } catch (error) {
                 console.error('Error fetching stock data:', error);

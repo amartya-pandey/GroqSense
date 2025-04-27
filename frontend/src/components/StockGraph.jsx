@@ -12,6 +12,7 @@ import {
     Legend
 } from 'chart.js';
 import axios from 'axios';
+import API_BASE_URL from '../api/config';
 import './StockGraph.css';
 
 ChartJS.register(
@@ -53,7 +54,7 @@ const StockGraph = ({ symbol }) => {
             try {
                 setLoading(true);
                 setError('');
-                const response = await axios.get(`/api/stock/historical/${symbol}?range=${timeRange}`);
+                const response = await axios.get(`${API_BASE_URL}/api/stock/historical/${symbol}?range=${timeRange}`);
                 console.log('API response data:', response.data);
                 const data = response.data;
 
