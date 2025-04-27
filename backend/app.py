@@ -6,7 +6,7 @@ from routes.ai import ai_bp
 from routes.patterns import patterns_bp
 from routes.stock import stock_bp
 from dotenv import load_dotenv
-from backend.utils.db import init_db
+from utils.db import init_db
 
 load_dotenv()
 
