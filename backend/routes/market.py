@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 import yfinance as yf
-from backend.utils.index_list import index_symbols
+from utils.index_list import index_symbols
 
 market_bp = Blueprint("market", __name__)
 
