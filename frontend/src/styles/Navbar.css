@@ -2,51 +2,90 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 12px 24px;
   background-color: #202123;
   color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .navbar-logo h1 {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
   margin: 0;
   color: #10a37f;
+  letter-spacing: 1px;
 }
 
-.navbar-links {
+ul {
   list-style: none;
   display: flex;
-  gap: 20px;
+  gap: 24px;
   margin: 0;
   padding: 0;
 }
 
-.navbar-links li {
+ul li {
   margin: 0;
 }
 
-.navbar-links a {
+ul li a {
   text-decoration: none;
   color: #d1d5db;
-  font-size: 1rem;
-  transition: color 0.3s ease;
+  font-size: 1.05rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 5px 0;
 }
 
-.navbar-links a:hover {
+/* Cool underline on hover */
+ul li a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  margin-top: 5px;
+  right: 0;
+  background: #10a37f;
+  transition: width 0.3s ease;
+  transform: rotate(0.5deg);
+  transform-origin: right;
+}
+
+ul li a:hover::after {
+  width: 100%;
+  left: 0;
+  background: #10a37f;
+  transform-origin: left;
+}
+
+ul li a:hover {
   color: #10a37f;
 }
 
-/* Responsive navbar */
+/* Responsive Navbar */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
     align-items: flex-start;
+    padding: 16px;
   }
 
-  .navbar-links {
+  ul {
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  ul li a {
+    width: 100%;
+    display: block;
   }
 }
