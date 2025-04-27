@@ -31,5 +31,21 @@ export const patternApi = {
             console.error('Error analyzing chart:', error);
             throw error;
         }
+    },
+
+    analyzeTrends: async (symbol, period = '1y', trendData) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/analyze-trends`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ symbol, period, trend_data: trendData }),
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error analyzing trends:', error);
+            throw error;
+        }
     }
 }; 

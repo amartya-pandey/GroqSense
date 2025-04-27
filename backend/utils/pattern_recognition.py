@@ -2,18 +2,21 @@ import os
 from typing import List, Dict, Any
 import pandas as pd
 import numpy as np
-from groq import Groq
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
 
+genai.configure(api_key=os.getenv('GeminiAPI_KEY'))
+model = genai.GenerativeModel('gemini-1.5-flash-latest')
+
 class PatternRecognizer:
     def __init__(self):
-        self.client = Groq(api_key=os.getenv('GROQ_API_KEY'))
+        self.chat = model.start_chat()
         
     def detect_patterns(self, data: pd.DataFrame) -> List[Dict[str, Any]]:
         """
-        Detect technical patterns in the given price data using Groq's LLM.
+        Detect technical patterns in the given price data using Gemini's LLM.
         
         Args:
             data (pd.DataFrame): DataFrame containing OHLCV data
@@ -43,16 +46,9 @@ class PatternRecognizer:
         4. Potential implications
         """
         
-        response = self.client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a technical analysis expert."},
-                {"role": "user", "content": prompt}
-            ],
-            model="mistral-saba-24b",
-            temperature=0.3
-        )
+        response = self.chat.send_message(prompt)
         
-        return self._parse_patterns(response.choices[0].message.content)
+        return self._parse_patterns(response.text)
     
     def analyze_chart(self, data: pd.DataFrame, query: str) -> str:
         """
@@ -81,16 +77,9 @@ class PatternRecognizer:
         - Potential turning points
         """
         
-        response = self.client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a technical analysis expert."},
-                {"role": "user", "content": prompt}
-            ],
-            model="mistral-saba-24b",
-            temperature=0.3
-        )
+        response = self.chat.send_message(prompt)
         
-        return response.choices[0].message.content
+        return response.text
     
     def _parse_patterns(self, analysis: str) -> List[Dict[str, Any]]:
         """

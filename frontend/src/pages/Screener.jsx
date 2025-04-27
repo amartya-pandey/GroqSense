@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import API from '../api';
 import '../styles/Screener.css';
+import { useNavigate } from 'react-router-dom';
 
 // Define which metrics should use <= for filtering
 const LOWER_BOUND_METRICS = new Set([
@@ -22,6 +23,8 @@ const Screener = () => {
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('valuation');
+
+  const navigate = useNavigate();
 
   const indexOptions = [
     { value: 'all', label: 'All Companies' },
@@ -75,9 +78,7 @@ const Screener = () => {
     { field: 'pb', headerName: 'P/B' },
     { field: 'bookValue', headerName: 'Book Value' },
     { field: 'eps', headerName: 'Diluted EPS' },
-    // { field: 'cagr5Y', headerName: '5Y CAGR (%)' },
     { field: 'marketCap', headerName: 'Market Cap (Cr)' },
-    // { field: 'dividendYield', headerName: 'Div Yield (%)' },
     { field: 'beta', headerName: 'Beta' },
     { field: 'avgVolume', headerName: 'Avg Volume' },
     { field: 'debtToEquity', headerName: 'Debt/Equity' },
@@ -87,13 +88,11 @@ const Screener = () => {
   const fetchStocks = async () => {
     setLoading(true);
     try {
-      console.log('Fetching stocks with:', { exchange, index });
       const response = await API.post('/screener/filter', {
         filters: {},
         exchange: exchange,
         index: index
       });
-      console.log('Received stocks:', response.data);
       setAllStocks(response.data);
       setFilteredStocks(response.data);
     } catch (error) {
@@ -153,6 +152,10 @@ const Screener = () => {
     }
   };
 
+  const handleStockClick = (symbol) => {
+    navigate(`/stock/${symbol}`);
+  };
+
   return (
     <div className="screener-container">
       <h1>Stock Screener</h1>
@@ -204,8 +207,8 @@ const Screener = () => {
           {metricGroups[activeTab].metrics.map(metric => (
             <div className="filter-group" key={metric.key}>
               <label>{metric.label}</label>
-      <input
-        type="number"
+              <input
+                type="number"
                 name={metric.key}
                 value={filters[metric.key]}
                 onChange={handleInputChange}
@@ -249,7 +252,7 @@ const Screener = () => {
               </thead>
               <tbody>
                 {filteredStocks.map((row, index) => (
-                  <tr key={index}>
+                  <tr key={index} onClick={() => handleStockClick(row.symbol)}>
                     {columns.map(column => (
                       <td key={column.field}>{row[column.field]}</td>
                     ))}

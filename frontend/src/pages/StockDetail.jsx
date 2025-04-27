@@ -35,42 +35,25 @@ const StockDetail = () => {
 
     const metricGroups = {
         'Valuation': [
-            { key: 'Current Price', format: (v) => `$${v?.toFixed(2) || 'N/A'}` },
-            { key: 'Market Cap (B)', format: (v) => `$${v?.toFixed(2)}B` },
-            { key: 'P/E Ratio', format: (v) => v?.toFixed(2) || 'N/A' },
-            { key: 'Forward P/E', format: (v) => v?.toFixed(2) || 'N/A' },
-            { key: 'P/B Ratio', format: (v) => v?.toFixed(2) || 'N/A' },
-            { key: 'P/S Ratio', format: (v) => v?.toFixed(2) || 'N/A' },
-            { key: 'Enterprise Value (B)', format: (v) => `$${v?.toFixed(2)}B` },
-            { key: 'Enterprise Value/EBITDA', format: (v) => v?.toFixed(2) || 'N/A' }
+            { key: 'price', label: 'Current Price', format: (v) => v !== undefined && v !== null ? `$${v.toFixed(2)}` : 'N/A' },
+            { key: 'marketCap', label: 'Market Cap', format: (v) => v !== undefined && v !== null ? `$${v.toLocaleString()}` : 'N/A' },
+            { key: 'pe', label: 'P/E Ratio', format: (v) => v !== undefined && v !== null ? v.toFixed(2) : 'N/A' },
+            { key: 'pb', label: 'P/B Ratio', format: (v) => v !== undefined && v !== null ? v.toFixed(2) : 'N/A' },
+            { key: 'bookValue', label: 'Book Value', format: (v) => v !== undefined && v !== null ? v.toFixed(2) : 'N/A' },
+            { key: 'eps', label: 'EPS', format: (v) => v !== undefined && v !== null ? v.toFixed(2) : 'N/A' },
+            { key: 'dividendYield', label: 'Dividend Yield', format: (v) => v !== undefined && v !== null ? `${(v * 100).toFixed(2)}%` : 'N/A' },
         ],
-        'Growth & Profitability': [
-            { key: 'ROE (%)', format: (v) => `${v?.toFixed(2)}%` },
-            { key: 'ROA (%)', format: (v) => `${v?.toFixed(2)}%` },
-            { key: 'Profit Margin (%)', format: (v) => `${v?.toFixed(2)}%` },
-            { key: '5Y CAGR (%)', format: (v) => `${v?.toFixed(2)}%` },
-            { key: 'Revenue Growth (%)', format: (v) => `${v?.toFixed(2)}%` },
-            { key: 'EPS Growth (%)', format: (v) => `${v?.toFixed(2)}%` },
-            { key: 'Revenue Growth (3Y)', format: (v) => `${(v * 100)?.toFixed(2)}%` },
-            { key: 'Earnings Growth (3Y)', format: (v) => `${(v * 100)?.toFixed(2)}%` }
+        'Profitability': [
+            { key: 'roe', label: 'ROE', format: (v) => v !== undefined && v !== null ? `${(v * 100).toFixed(2)}%` : 'N/A' },
         ],
-        'Dividend & Financial Health': [
-            { key: 'Dividend Yield (%)', format: (v) => `${v?.toFixed(2)}%` },
-            { key: 'Dividend Payout Ratio (%)', format: (v) => `${v?.toFixed(2)}%` },
-            { key: 'Debt/Equity', format: (v) => v?.toFixed(2) || 'N/A' },
-            { key: 'Current Ratio', format: (v) => v?.toFixed(2) || 'N/A' },
-            { key: 'Free Cash Flow (B)', format: (v) => `$${v?.toFixed(2)}B` },
-            { key: 'Operating Cash Flow (B)', format: (v) => `$${v?.toFixed(2)}B` }
+        'Technical': [
+            { key: 'beta', label: 'Beta', format: (v) => v !== undefined && v !== null ? v.toFixed(2) : 'N/A' },
+            { key: 'avgVolume', label: 'Avg Volume', format: (v) => v !== undefined && v !== null ? v.toLocaleString() : 'N/A' },
         ],
-        'Market & Ownership': [
-            { key: 'Beta', format: (v) => v?.toFixed(2) || 'N/A' },
-            { key: '52 Week High', format: (v) => `$${v?.toFixed(2)}` },
-            { key: '52 Week Low', format: (v) => `$${v?.toFixed(2)}` },
-            { key: 'Analyst Target Price', format: (v) => `$${v?.toFixed(2)}` },
-            { key: 'Analyst Recommendation', format: (v) => v || 'N/A' },
-            { key: 'Short % of Float', format: (v) => `${(v * 100)?.toFixed(2)}%` },
-            { key: 'Institution %', format: (v) => `${(v * 100)?.toFixed(2)}%` },
-            { key: 'Insider %', format: (v) => `${(v * 100)?.toFixed(2)}%` }
+        'Other': [
+            { key: 'symbol', label: 'Symbol', format: (v) => v || 'N/A' },
+            { key: 'name', label: 'Company Name', format: (v) => v || 'N/A' },
+            { key: 'exchange', label: 'Exchange', format: (v) => v || 'N/A' },
         ]
     };
 
@@ -86,9 +69,9 @@ const StockDetail = () => {
                 <div key={groupName} className="metric-group">
                     <h2>{groupName}</h2>
                     <div className="metrics-grid">
-                        {metrics.map(({ key, format }) => (
+                        {metrics.map(({ key, label, format }) => (
                             <div key={key} className="metric-card">
-                                <h3>{key}</h3>
+                                <h3>{label}</h3>
                                 <p>{format(stockData[key])}</p>
                             </div>
                         ))}

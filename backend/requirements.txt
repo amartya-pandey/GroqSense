@@ -8,3 +8,5 @@ Bharat-sm-data
 groq
 pandas
 numpy
+redis
+google-generativeai

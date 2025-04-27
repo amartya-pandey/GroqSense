@@ -1,139 +1,83 @@
 import React, { useState } from 'react';
-import { patternApi } from '../api/patternApi';
-import '../styles/PatternRecognition.css';
+import axios from 'axios';
 
-const PatternRecognition = () => {
+const Patterns = () => {
     const [symbol, setSymbol] = useState('');
     const [period, setPeriod] = useState('1y');
-    const [query, setQuery] = useState('');
-    const [patterns, setPatterns] = useState([]);
-    const [analysis, setAnalysis] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [patterns, setPatterns] = useState(null);
+    const [trendSummary, setTrendSummary] = useState('');
     const [error, setError] = useState('');
 
-    const formatConfidence = (confidence) => {
-        if (typeof confidence === 'number') {
-            return `${confidence.toFixed(1)}%`;
-        }
-        return 'N/A';
-    };
-
-    const formatDates = (dates) => {
-        if (!dates) return 'N/A';
-        if (typeof dates === 'string') return dates;
-        if (dates.start && dates.end) {
-            return `${dates.start} to ${dates.end}`;
-        }
-        return 'N/A';
-    };
-
-    const handleDetectPatterns = async () => {
+    const handleAnalyzeTrends = async (event) => {
+        event.preventDefault();
         try {
-            setLoading(true);
             setError('');
-            const response = await patternApi.detectPatterns(symbol, period);
-            if (response.success && response.patterns) {
-                const validPatterns = response.patterns.filter(pattern => 
-                    pattern && typeof pattern === 'object'
-                );
-                setPatterns(validPatterns);
-                if (validPatterns.length === 0) {
-                    setError('No clear patterns detected in the current timeframe');
-                }
+            setPatterns(null);
+            setTrendSummary('');
+
+            // Send request to backend
+            const response = await axios.post('/patterns/analyze-trends', {
+                symbol,
+                period
+            });
+
+            if (response.data.success) {
+                setPatterns(response.data.patterns);
+                setTrendSummary(response.data.trend_summary);
             } else {
-                setError(response.error || 'Failed to detect patterns');
+                setError(response.data.error || 'An error occurred while analyzing trends.');
             }
         } catch (err) {
-            setError('An error occurred while detecting patterns');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleAnalyzeChart = async () => {
-        try {
-            setLoading(true);
-            setError('');
-            const response = await patternApi.analyzeChart(symbol, query, period);
-            if (response.success) {
-                setAnalysis(response.analysis);
-            } else {
-                setError(response.error || 'Failed to analyze chart');
-            }
-        } catch (err) {
-            setError('An error occurred while analyzing the chart');
-        } finally {
-            setLoading(false);
+            setError(err.message || 'Server error.');
         }
     };
 
     return (
-        <div className="pattern-recognition">
-            <h2>Pattern Recognition</h2>
-            
-            <div className="input-group">
-                <input
-                    type="text"
-                    placeholder="Enter stock symbol (e.g., RELIANCE.NS)"
-                    value={symbol}
-                    onChange={(e) => setSymbol(e.target.value)}
-                />
-                <select value={period} onChange={(e) => setPeriod(e.target.value)}>
-                    <option value="1d">1 Day</option>
-                    <option value="5d">5 Days</option>
-                    <option value="1mo">1 Month</option>
-                    <option value="3mo">3 Months</option>
-                    <option value="6mo">6 Months</option>
-                    <option value="1y">1 Year</option>
-                    <option value="2y">2 Years</option>
-                    <option value="5y">5 Years</option>
-                </select>
-            </div>
+        <div className="patterns-page">
+            <h1>Pattern Recognition</h1>
+            <form onSubmit={handleAnalyzeTrends}>
+                <div>
+                    <label>
+                        Symbol:
+                        <input
+                            type="text"
+                            value={symbol}
+                            onChange={(e) => setSymbol(e.target.value)}
+                            placeholder="Enter stock symbol (e.g., SBIN.NS)"
+                        />
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Period:
+                        <select value={period} onChange={(e) => setPeriod(e.target.value)}>
+                            <option value="1y">1 Year</option>
+                            <option value="6m">6 Months</option>
+                            <option value="3m">3 Months</option>
+                            <option value="1m">1 Month</option>
+                        </select>
+                    </label>
+                </div>
+                <button type="submit">Analyze Trends</button>
+            </form>
 
-            <div className="button-group">
-                <button onClick={handleDetectPatterns} disabled={loading || !symbol}>
-                    {loading ? 'Detecting...' : 'Detect Patterns'}
-                </button>
-            </div>
+            {error && <div className="error">Error: {error}</div>}
 
-            {patterns.length > 0 && (
-                <div className="patterns-list">
-                    <h3>Detected Patterns</h3>
-                    {patterns.map((pattern, index) => (
-                        <div key={index} className="pattern-card">
-                            <h4>{pattern.name || 'Unknown Pattern Type'}</h4>
-                            <p><strong>Dates:</strong> {formatDates(pattern.dates)}</p>
-                            <p><strong>Confidence:</strong> {formatConfidence(pattern.confidence)}</p>
-                            <p><strong>Implications:</strong> {pattern.implications || 'Analysis not available'}</p>
-                        </div>
-                    ))}
+            {patterns && (
+                <div className="patterns">
+                    <h2>Detected Patterns</h2>
+                    <pre>{JSON.stringify(patterns, null, 2)}</pre>
                 </div>
             )}
 
-            <div className="analysis-section">
-                <h3>Ask About the Chart</h3>
-                <input
-                    type="text"
-                    placeholder="Enter your question (e.g., Show me bullish patterns)"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                />
-                <button onClick={handleAnalyzeChart} disabled={loading || !symbol || !query}>
-                    {loading ? 'Analyzing...' : 'Analyze Chart'}
-                </button>
-
-                {analysis && (
-                    <div className="analysis-result">
-                        <h4>Analysis Result</h4>
-                        <p>{analysis}</p>
-                    </div>
-                )}
-            </div>
-
-            {error && <div className="error-message">{error}</div>}
-            {loading && <div className="loading">Processing chart data...</div>}
+            {trendSummary && (
+                <div className="trend-summary">
+                    <h2>Trend Summary</h2>
+                    <p>{trendSummary}</p>
+                </div>
+            )}
         </div>
     );
 };
 
-export default PatternRecognition; 
+export default Patterns;

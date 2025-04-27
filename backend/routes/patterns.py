@@ -1,58 +1,43 @@
 from flask import Blueprint, request, jsonify
 from backend.utils.pattern_recognition import PatternRecognizer
-import yfinance as yf
 import pandas as pd
+import logging
+import os
+from dotenv import load_dotenv
+# from some_stock_data_service import StockDataService  # Hypothetical service for fetching stock data
+import requests
+
+logging.basicConfig(level=logging.INFO)
+
+# Load environment variables from .env file
+load_dotenv()
 
 patterns_bp = Blueprint('patterns', __name__)
 pattern_recognizer = PatternRecognizer()
 
-@patterns_bp.route('/detect-patterns', methods=['POST'])
-def detect_patterns():
+@patterns_bp.route('/analyze-trends', methods=['POST'])
+def analyze_trends():
     try:
+        logging.info("Received request for trend analysis.")
         data = request.json
+        logging.info(f"Request data: {data}")
+        
         symbol = data.get('symbol')
         period = data.get('period', '1y')
         
-        # Fetch stock data
-        stock = yf.Ticker(symbol)
-        df = stock.history(period=period)
-        
-        # Detect patterns
-        patterns = pattern_recognizer.detect_patterns(df)
+        # Directly ask Gemini AI to analyze the trend
+        query = f"Analyze trends for {symbol} over {period}."
+        summary = pattern_recognizer.analyze_chart(pd.DataFrame(), query)
+        logging.info(f"Generated summary: {summary}")
         
         return jsonify({
             'success': True,
-            'patterns': patterns
+            'trend_summary': summary
         })
         
     except Exception as e:
+        logging.error(f"Error in analyze_trends: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
         }), 500
-
-@patterns_bp.route('/analyze-chart', methods=['POST'])
-def analyze_chart():
-    try:
-        data = request.json
-        symbol = data.get('symbol')
-        query = data.get('query')
-        period = data.get('period', '1y')
-        
-        # Fetch stock data
-        stock = yf.Ticker(symbol)
-        df = stock.history(period=period)
-        
-        # Analyze chart based on query
-        analysis = pattern_recognizer.analyze_chart(df, query)
-        
-        return jsonify({
-            'success': True,
-            'analysis': analysis
-        })
-        
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500 

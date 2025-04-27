@@ -24,12 +24,19 @@ ChartJS.register(
     Legend
 );
 
+// Clean array: only allow numbers, replace others with null (Chart.js skips null)
+const cleanArray = arr => arr ? arr.map(v => (typeof v === 'number' && !isNaN(v) ? v : null)) : [];
+// Limit number of points for performance
+const MAX_POINTS = 200;
+const sliceData = arr => arr.length > MAX_POINTS ? arr.slice(-MAX_POINTS) : arr;
+
 const StockGraph = ({ symbol }) => {
+    console.log('StockGraph received symbol:', symbol);
     const [timeRange, setTimeRange] = useState('1m');
-    const [chartData, setChartData] = useState(null);
+    const [priceChartData, setPriceChartData] = useState(null);
+    const [volumeChartData, setVolumeChartData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [showVolume, setShowVolume] = useState(true);
-    const [showMA, setShowMA] = useState(true);
+    const [error, setError] = useState('');
 
     const timeRanges = {
         '5d': '5 Days',
@@ -44,62 +51,52 @@ const StockGraph = ({ symbol }) => {
         const fetchStockData = async () => {
             try {
                 setLoading(true);
+                setError('');
                 const response = await axios.get(`/api/stock/historical/${symbol}?range=${timeRange}`);
+                console.log('API response data:', response.data);
                 const data = response.data;
 
-                const datasets = [
-                    {
-                        label: `${symbol} Price`,
-                        data: data.prices,
-                        borderColor: 'rgb(75, 192, 192)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                        tension: 0.1,
-                        yAxisID: 'y'
-                    }
-                ];
-
-                // Add moving averages if enabled
-                if (showMA) {
-                    if (data.ma20) {
-                        datasets.push({
-                            label: '20-day MA',
-                            data: data.ma20,
-                            borderColor: 'rgb(255, 99, 132)',
-                            borderDash: [5, 5],
-                            tension: 0.1,
-                            yAxisID: 'y'
-                        });
-                    }
-                    if (data.ma50) {
-                        datasets.push({
-                            label: '50-day MA',
-                            data: data.ma50,
-                            borderColor: 'rgb(54, 162, 235)',
-                            borderDash: [5, 5],
-                            tension: 0.1,
-                            yAxisID: 'y'
-                        });
-                    }
+                if (!data.prices || data.prices.length === 0) {
+                    setError('No price data available for this stock and range.');
+                    setPriceChartData(null);
+                    setVolumeChartData(null);
+                    return;
                 }
 
-                const chartData = {
-                    labels: data.dates,
-                    datasets: datasets
-                };
+                // Clean and slice data for plotting
+                const cleanedPrices = sliceData(cleanArray(data.prices));
+                const cleanedVolumes = sliceData(cleanArray(data.volumes));
+                const cleanedDates = sliceData(data.dates);
 
-                // Add volume data if enabled
-                if (showVolume && data.volumes) {
-                    chartData.datasets.push({
-                        label: 'Volume',
-                        data: data.volumes,
-                        backgroundColor: 'rgba(201, 203, 207, 0.5)',
-                        yAxisID: 'y1',
-                        type: 'bar'
-                    });
-                }
+                setPriceChartData({
+                    labels: cleanedDates,
+                    datasets: [
+                        {
+                            label: `${symbol} Price`,
+                            data: cleanedPrices,
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                            tension: 0.1,
+                        }
+                    ]
+                });
 
-                setChartData(chartData);
+                setVolumeChartData({
+                    labels: cleanedDates,
+                    datasets: [
+                        {
+                            label: 'Volume',
+                            data: cleanedVolumes,
+                            backgroundColor: 'rgba(201, 203, 207, 0.5)',
+                            borderColor: 'rgba(201, 203, 207, 1)',
+                            type: 'bar',
+                        }
+                    ]
+                });
             } catch (error) {
+                setError('Error fetching stock data.');
+                setPriceChartData(null);
+                setVolumeChartData(null);
                 console.error('Error fetching stock data:', error);
             } finally {
                 setLoading(false);
@@ -107,21 +104,17 @@ const StockGraph = ({ symbol }) => {
         };
 
         fetchStockData();
-    }, [symbol, timeRange, showVolume, showMA]);
+    }, [symbol, timeRange]);
 
-    const options = {
+    const priceOptions = {
         responsive: true,
-        interaction: {
-            mode: 'index',
-            intersect: false,
-        },
         plugins: {
             legend: {
                 position: 'top',
             },
             title: {
                 display: true,
-                text: `${symbol} Stock Price History`
+                text: `${symbol} Price History`
             }
         },
         scales: {
@@ -133,17 +126,29 @@ const StockGraph = ({ symbol }) => {
                     display: true,
                     text: 'Price'
                 }
+            }
+        }
+    };
+
+    const volumeOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
             },
-            y1: {
+            title: {
+                display: true,
+                text: `${symbol} Volume History`
+            }
+        },
+        scales: {
+            y: {
                 type: 'linear',
-                display: showVolume,
-                position: 'right',
+                display: true,
+                position: 'left',
                 title: {
                     display: true,
                     text: 'Volume'
-                },
-                grid: {
-                    drawOnChartArea: false
                 }
             }
         }
@@ -163,28 +168,17 @@ const StockGraph = ({ symbol }) => {
                         </button>
                     ))}
                 </div>
-                <div className="toggle-buttons">
-                    <button
-                        onClick={() => setShowVolume(!showVolume)}
-                        className={showVolume ? 'active' : ''}
-                    >
-                        Volume
-                    </button>
-                    <button
-                        onClick={() => setShowMA(!showMA)}
-                        className={showMA ? 'active' : ''}
-                    >
-                        Moving Averages
-                    </button>
-                </div>
             </div>
 
             {loading ? (
                 <div className="loading">Loading chart data...</div>
-            ) : chartData ? (
-                <Line data={chartData} options={options} />
+            ) : error ? (
+                <div className="error">{error}</div>
             ) : (
-                <div className="error">Error loading chart data</div>
+                <>
+                    {priceChartData && <Line data={priceChartData} options={priceOptions} />}
+                    {volumeChartData && <Bar data={volumeChartData} options={volumeOptions} />}
+                </>
             )}
         </div>
     );
