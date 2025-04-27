@@ -1,12 +1,13 @@
-Flask
+Flask==2.3.3
 flask-cors
 yfinance
 beautifulsoup4
-requests
-python-dotenv
+requests==2.31.0
+python-dotenv==1.0.1
 Bharat-sm-data
 groq
 pandas
 numpy
 redis
 google-generativeai
+gunicorn

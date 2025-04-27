@@ -233,3 +233,5 @@ $RECYCLE.BIN/
 
 # this is my files which are created by me but not useful for others
 ability.md
+
+.env
