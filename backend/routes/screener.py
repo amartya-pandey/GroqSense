@@ -15,20 +15,29 @@ screener_bp = Blueprint('screener', __name__)
 CACHE_EXPIRY_HOURS = 18
 
 def get_cached_stock(session, symbol):
-    cache = session.query(StockCache).filter_by(symbol=symbol).first()
-    if cache and (datetime.utcnow() - cache.updated_at) < timedelta(hours=CACHE_EXPIRY_HOURS):
-        return cache.data
-    return None
+    try:
+        cache = session.query(StockCache).filter_by(symbol=symbol).first()
+        if cache and (datetime.utcnow() - cache.updated_at) < timedelta(hours=CACHE_EXPIRY_HOURS):
+            return cache.data
+        return None
+    except SQLAlchemyError as e:
+        logging.error(f"Database error in get_cached_stock for {symbol}: {str(e)}")
+        session.rollback()  # Roll back the transaction
+        return None
 
 def set_cached_stock(session, symbol, data):
-    cache = session.query(StockCache).filter_by(symbol=symbol).first()
-    if cache:
-        cache.data = data
-        cache.updated_at = datetime.utcnow()
-    else:
-        cache = StockCache(symbol=symbol, data=data)
-        session.add(cache)
-    session.commit()
+    try:
+        cache = session.query(StockCache).filter_by(symbol=symbol).first()
+        if cache:
+            cache.data = data
+            cache.updated_at = datetime.utcnow()
+        else:
+            cache = StockCache(symbol=symbol, data=data)
+            session.add(cache)
+        session.commit()
+    except SQLAlchemyError as e:
+        logging.error(f"Database error in set_cached_stock for {symbol}: {str(e)}")
+        session.rollback()  # Roll back the transaction
 
 # Define which metrics should use <= for filtering
 LOWER_BOUND_METRICS = {
@@ -114,12 +123,14 @@ def filter_stocks():
                     
                 except Exception as e:
                     logging.error(f"Error processing stock {symbol}: {str(e)}")
+                    session.rollback()  # Roll back the transaction on error
                     continue
 
             return jsonify(results)
         
         except Exception as e:
             logging.error(f"Error in filter_stocks: {str(e)}")
+            session.rollback()  # Roll back the transaction on error
             return jsonify([]), 500
     finally:
         session.close()

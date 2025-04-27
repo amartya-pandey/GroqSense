@@ -7,6 +7,7 @@ from routes.patterns import patterns_bp
 from routes.stock import stock_bp
 from dotenv import load_dotenv
 from utils.db import init_db
+import logging
 
 load_dotenv()
 
@@ -31,6 +32,13 @@ app.register_blueprint(stock_bp, url_prefix="/api/stock")
 def home():
     return {"message": "GroqSense Backend is Running ✅"}
 
-if __name__ == "__main__":
+# Initialize database tables
+try:
+    logging.info("Initializing database tables...")
     init_db()
+    logging.info("Database tables initialized successfully.")
+except Exception as e:
+    logging.error(f"Error initializing database tables: {str(e)}")
+
+if __name__ == "__main__":
     app.run(debug=True)
