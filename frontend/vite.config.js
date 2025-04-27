@@ -5,7 +5,7 @@ export default {
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'http://localhost:5000'
+      '/api': 'https://groqsense.onrender.com'
     }
   }
 }

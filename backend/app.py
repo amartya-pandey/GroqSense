@@ -11,7 +11,14 @@ from utils.db import init_db
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+# Configure CORS with specific settings
+CORS(app, resources={
+    r"/*": {
+        "origins": ["https://groqsense-rphz.onrender.com", "http://localhost:3000", "http://localhost:5173", "https://groqsense.onrender.com"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"]
+    }
+})
 
 # Register Blueprints
 app.register_blueprint(market_bp, url_prefix="/market")

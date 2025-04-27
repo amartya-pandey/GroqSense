@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000', // Adjust if deploying
+  baseURL: 'https://groqsense.onrender.com', // Updated to use correct deployed backend URL
 });
 
 export default API;
