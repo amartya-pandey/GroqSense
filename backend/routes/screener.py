@@ -5,8 +5,8 @@ from utils.stock_list_utils import stock_list_fetcher
 from utils.companies import NSE_COMPANIES, BSE_COMPANIES, NSE_NEXT_50, BSE_100
 import logging
 import os
-from backend.utils.db import SessionLocal
-from backend.models.stock_cache import StockCache
+from utils.db import SessionLocal
+from models.stock_cache import StockCache
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timedelta
 
